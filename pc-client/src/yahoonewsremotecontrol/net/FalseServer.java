@@ -21,23 +21,24 @@ public class FalseServer extends Thread{
     
     public static void  main(String[] args){
         port = 12345;
-        try{
-            server=new ServerSocket(port);
+        try {
+            server = new ServerSocket(port);
             System.out.println("waiting for client..");
-            Socket socket=server.accept();
-            System.out.println("Client connected..");
-            
-            BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            String line;
+            while (true) {
+                Socket socket = server.accept();
+                System.out.println("Client " + socket + " connected..");
 
-            while((line = sin.readLine()) != "exit"){
-                line = "showpic\t" + line + "\n";
-                out.write(line);
-                System.out.println("Server send:\t" + line);
-                out.flush();
-            }
-            
+                BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                String line;
+
+                while ((line = sin.readLine()) != "exit") {
+                    line = line + "\n";
+                    out.write(line);
+                    System.out.print("Server send:\t" + line);
+                    out.flush();
+                }
+            }           
         }
         catch(Exception e){
             e.printStackTrace();

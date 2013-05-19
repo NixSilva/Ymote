@@ -4,10 +4,12 @@
  */
 package yahoonewsremotecontrol;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import yahoonewsremotecontrol.GUI.FigureShower;
 import yahoonewsremotecontrol.GUI.LoadingDialog;
 import yahoonewsremotecontrol.GUI.LoginFrame;
+import yahoonewsremotecontrol.GUI.ScaleIcon;
 import yahoonewsremotecontrol.net.ServerConnector;
 
 /**
@@ -36,6 +38,7 @@ public class YahooNewsRemoteControl {
         
         FigureShower m = new FigureShower();
         m.setVisible(true);
+        ImageIcon lastImg = null;
         
         final LoadingDialog ld = new LoadingDialog(m, true);
         //ld.setVisible(true);
@@ -51,7 +54,8 @@ public class YahooNewsRemoteControl {
                     }
                 }).start();
                 
-                m.showFigure(ffm.getImageIcon(c.contend));
+                lastImg = ffm.getImageIcon(c.contend);
+                m.showFigure(c.getTitle(), lastImg);
                 
                  new Thread(new Runnable() {
                     public void run(){
@@ -59,11 +63,34 @@ public class YahooNewsRemoteControl {
                     }
                 }).start();
             }
+            else if(c.cmd == Command.Cmd.Visiable){
+                m.setVisible(true);
+            }
+            else if(c.cmd == Command.Cmd.Unvisiable){
+                m.setVisible(false);
+            }
+            else if(c.cmd == Command.Cmd.ScaleLarge){
+                m.Scale(1.1);
+            }
+            else if(c.cmd == Command.Cmd.ScaleSmall){
+                m.Scale(0.9);
+            }
+            else if(c.cmd == Command.Cmd.showWeather){
+                System.out.println(c.contend);
+                m.showFigure(c.contend, lastImg);
+            }
+            else if(c.cmd == Command.Cmd.LeftEnd || c.cmd == Command.Cmd.RightEnd){
+                m.setNewsTitle("No more Pictures.");
+            }
+            else if(c.cmd == Command.Cmd.Exit){
+                m.dispose();
+                break;
+            }
             else{
-                JOptionPane.showMessageDialog(m, c.getContend(), "ERROR", JOptionPane.WARNING_MESSAGE);
+                //JOptionPane.showMessageDialog(m, "Unknown command", "ERROR", JOptionPane.WARNING_MESSAGE);
                 break;
             }
         }
-        m.dispose();        
+        //m.dispose();        
     }
 }

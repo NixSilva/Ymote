@@ -6,24 +6,28 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;  
 import java.net.Socket;  
 
+import org.htmlparser.util.ParserException;
 import org.json.JSONException;
 
 public class Myserver{
-
+	 //static boolean f = true;
 	 public static void main(String[] args) throws IOException, JSONException {
 		 	
-	        
-	        ServerSocket server1 = new ServerSocket(10001);  
-	       
-	        while (true) {   Socket socket1 = server1.accept();
-	            
-	            invoke(socket1);  
-	        }  
+	    //    while(true){
+	        	ServerSocket server1 = new ServerSocket(10001);  
+	        	
+		        while (true) {   
+		        	Socket socket1 = server1.accept();	            
+		            invoke(socket1);  
+		        }
+		        //server1.close();
+	    //    }
+		 	
 	    }  
 	      
 	    private static void invoke(final Socket client1) throws IOException, JSONException {  
 	    	final ServerSocket server = new ServerSocket(10000);  
-	    	final YahooNews yn = new YahooNews();
+	    	final YahooIntPic yn = new YahooIntPic();
 	    	String res = null;
 	    	new Thread(new Runnable() {  
 	            public void run() {   
@@ -56,9 +60,19 @@ public class Myserver{
 		                        }else if(msg.equals("r")){
 		                        	out.println(yn.getPrevise());
 		                        }else if(msg.equals("u")){
-		                        	out.println(yn.getNext());
+		                        	out.println(yn.update());
 		                        }else if(msg.equals("d")){
-		                        	out.println(yn.getPrevise());
+		                        	out.println(yn.update());
+		                        }else if(msg.equals("n")){
+		                        	out.println("n");
+		                        }else if(msg.equals("f")){
+		                        	out.println("f");
+		                        }else if(msg.equals("i")){
+		                        	out.println("i");
+		                        }else if(msg.equals("o")){
+		                        	out.println("o");
+		                        }else if(msg.equals("w")){
+		                        	out.println(yn.weather());
 		                        }else if(msg.equals("bye")){
 		                        	out.println("bye");
 		                        //	break;
@@ -76,6 +90,9 @@ public class Myserver{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ParserException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} finally {  

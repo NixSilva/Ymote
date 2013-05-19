@@ -1,10 +1,10 @@
 #Fat Jar Configuration File
-#Sat May 18 22:07:05 CST 2013
+#Sun May 19 08:07:03 CST 2013
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=false
-jarname=socket_server_fat1.jar
+jarname=socket_server.jar
 manifest.mergeall=true
 manifest.mainclass=MyServer2
 manifest.file=<createnew>

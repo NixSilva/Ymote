@@ -3,6 +3,11 @@ import java.io.IOException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.htmlparser.NodeFilter;
+import org.htmlparser.Parser;
+import org.htmlparser.filters.TagNameFilter;
+import org.htmlparser.util.NodeList;
+import org.htmlparser.util.ParserException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +40,30 @@ public class YahooNews {
 		size = jsonArray.length();
 		//clear();
 	}
-	
+	public static String weather() throws HttpException, IOException, ParserException{
+		String w="";
+		HttpClient httpclient=new HttpClient();
+		GetMethod getMethod=new GetMethod("http://weather.yahooapis.com/forecastrss?w=12578011&u=c");
+		//回车，获得响应状态码
+		int statusCode=httpclient.executeMethod(getMethod);
+		System.out.println(getMethod.getResponseBodyAsString());
+		Parser parser = new Parser(getMethod.getResponseBodyAsString());
+		/*NodeFilter tagfilter = new TagNameFilter ("description");
+		NodeList sub_nodes = parser.extractAllNodesThatMatch(tagfilter);
+		
+		System.out.println(sub_nodes.elementAt(1).toHtml());*/
+		NodeFilter tagfilter = new TagNameFilter ("yweather:forecast");
+		NodeList sub_nodes = parser.extractAllNodesThatMatch(tagfilter);
+		
+		w+=sub_nodes.elementAt(0).getText().substring(18);
+		w+=sub_nodes.elementAt(1).getText().substring(18);
+		//System.out.println(sub_nodes.elementAt(0).getText().substring(18));
+		//System.out.println(sub_nodes.elementAt(1).getText().substring(18));
+		System.out.println(w);
+		
+		//http://weather.yahooapis.com/forecastrss?w=12578011&u=c
+		return "w\t"+w;
+	}
 	public void clear() throws JSONException{
 		for(int i=0;i<jsonArray.length();i++){
 			JSONObject jsonobject2=jsonArray.getJSONObject(i);
@@ -69,7 +97,7 @@ public class YahooNews {
 			if(jsonObject.opt("type") != null){
 				if(jsonObject.getString("type").equals("image/jpeg")){
 					url=jsonObject.getString("url");
-					return title+"\t"+url;
+					return "s\t"+title+"\t"+url;
 				}
 			}
 		}
@@ -97,23 +125,14 @@ public class YahooNews {
 	 * @throws JSONException 
 	 * @throws IOException 
 	 * @throws HttpException 
+	 * @throws ParserException 
 	 */
-	public static void main(String[] args) throws HttpException, IOException, JSONException {
+	public static void main(String[] args) throws HttpException, IOException, JSONException, ParserException {
 		// TODO Auto-generated method stub
 		YahooNews yn = new YahooNews();
-		
+		yn.weather();
 		//for(int i=0;i<yn.getSize();i++){
-			System.out.println(yn.getNext());
-			System.out.println(yn.getCurrent());
-			System.out.println(yn.getNext());
-			System.out.println(yn.getCurrent());
-			System.out.println(yn.getNext());
-			System.out.println(yn.getCurrent());
-			System.out.println(yn.getPrevise());
-			System.out.println(yn.getCurrent());
-			System.out.println(yn.getPrevise());
-			System.out.println(yn.getCurrent());
-			System.out.println(yn.getPrevise());
+			
 		//}
 		
 	}

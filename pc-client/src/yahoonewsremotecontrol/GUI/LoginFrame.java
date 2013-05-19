@@ -6,6 +6,7 @@ package yahoonewsremotecontrol.GUI;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import yahoonewsremotecontrol.net.ServerConnector;
 
@@ -35,6 +36,7 @@ public class LoginFrame extends javax.swing.JFrame {
      */
     public LoginFrame() {
         initComponents();
+        this.setIconImage(new ImageIcon("src\\yahoonewsremotecontrol\\GUI\\icontexto_inside_yahoo.png").getImage());
         this.setTitle("Yahoo News Client Login");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = this.getSize();

@@ -4,7 +4,9 @@
  */
 package yahoonewsremotecontrol.GUI;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 
@@ -16,7 +18,7 @@ public class FigureShower extends javax.swing.JFrame {
     
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
-    double largerScale(int weight, int height){
+    double adaptToScreenProportion(int weight, int height){
         double screenProportion = screenSize.getWidth() / screenSize.getHeight();
         double figureProportion = (double)weight / height;
         
@@ -26,13 +28,25 @@ public class FigureShower extends javax.swing.JFrame {
         return screenSize.getWidth() / weight;
     }
     
-    public void showFigure(ImageIcon figure) {
-        //this.getContentPane().add(jLabelFigure, BorderLayout.CENTER);
+    public void setNewsTitle(String s){
+        String blank = "                                                  ";
+        this.jLabelNewsTitle.setText(s + blank);
+    }
+    
+    public void Scale(double proportion){
+        Dimension d = this.getSize();
+        d.height = (int)(d.height * proportion);
+        d.width = (int)(d.width * proportion);
+        this.setSize(d);
+        Center();
+    }
+    
+    public void showFigure(String title, ImageIcon figure) {
         setTitle("Yahoo News!");
         
         int width = figure.getIconWidth();
         int height = figure.getIconHeight();
-        double scale = largerScale(width, height) / 1.1;
+        double scale = adaptToScreenProportion(width, height) / 1.1;
         System.out.println(width+", "+ height);
         
         width = (int)(width * scale);
@@ -40,13 +54,15 @@ public class FigureShower extends javax.swing.JFrame {
         System.out.println(width+", "+ height);
         
         
-        setSize(width, height);
+        this.setSize(width, height);
         //setSize(500, 1000);
         //this.setExtendedState(JFrame.MAXIMIZED_VERT);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        setVisible(true);
-        jLabelFigure.setIcon(new ScaleIcon(figure));
+        //setVisible(true);
+        this.jLabelFigure.setIcon(new ScaleIcon(figure));
+        setNewsTitle(title);
+        
         Center();
         //frame.setVisible(true);
     }
@@ -65,8 +81,27 @@ public class FigureShower extends javax.swing.JFrame {
         this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
     }
     public FigureShower() {
-        initComponents();
-        Center();
+        initComponents();        
+        this.showFigure("雅虎新闻", new ImageIcon("src\\yahoonewsremotecontrol\\GUI\\default.jpg"));
+        this.setIconImage(new ImageIcon("src\\yahoonewsremotecontrol\\GUI\\icontexto_inside_yahoo.png").getImage());
+        
+        this.jLabelLogo.setIcon(new ScaleIcon(new ImageIcon("src\\yahoonewsremotecontrol\\GUI\\location_news.png")));
+        this.getContentPane().setBackground(Color.white);
+        
+        new Thread(new Runnable() {
+            public void run(){
+                while (FigureShower.this.isEnabled()) {
+                    String title = jLabelNewsTitle.getText();
+                    title += title.charAt(0);
+                    jLabelNewsTitle.setText(title.substring(1));
+                    try {
+                        Thread.sleep(200);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }        
+            }
+        }).start();
     }
 
     /**
@@ -79,21 +114,37 @@ public class FigureShower extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabelFigure = new javax.swing.JLabel();
+        jLabelNewsTitle = new javax.swing.JLabel();
+        jLabelLogo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabelFigure.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelFigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/yahoonewsremotecontrol/GUI/default.jpg"))); // NOI18N
 
+        jLabelNewsTitle.setFont(new java.awt.Font("微软雅黑", 0, 36)); // NOI18N
+        jLabelNewsTitle.setText("雅虎新闻");
+        jLabelNewsTitle.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabelNewsTitle.setPreferredSize(new java.awt.Dimension(145, 50));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabelFigure, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabelFigure, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabelLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelNewsTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabelFigure, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabelNewsTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelFigure, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))
         );
 
         jLabelFigure.getAccessibleContext().setAccessibleDescription("");
@@ -132,15 +183,32 @@ public class FigureShower extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                //new FigureShower().setVisible(true); 
-               FigureShower m = new FigureShower();
+               final FigureShower m = new FigureShower();
                m.setVisible(true);
-               m.showFigure(new ImageIcon("C:\\Desert.jpg"));
-               //m.showFigure(new ImageIcon("temp\\xiaohua.jpg"));
-               //m.showFigure(new ImageIcon("C:\\2.jpg"));
+               //m.showFigure("Desert", new ImageIcon("C:\\Desert.jpg"));
+               m.showFigure("yiping2", new ImageIcon("temp\\yiping2.jpg"));
+                //m.showFigure(new ImageIcon("C:\\2.jpg"));
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                            m.Scale(1.1);
+                            Thread.sleep(1000);
+                            m.Scale(0.9);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
+
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabelFigure;
+    private javax.swing.JLabel jLabelLogo;
+    private javax.swing.JLabel jLabelNewsTitle;
     // End of variables declaration//GEN-END:variables
 }
